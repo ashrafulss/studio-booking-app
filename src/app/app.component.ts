@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { StudioListComponent } from "./coponent/studio-list/studio-list.component";
 
 @Component({
@@ -7,7 +7,7 @@ import { StudioListComponent } from "./coponent/studio-list/studio-list.componen
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
-    imports: [RouterOutlet, StudioListComponent]
+    imports: [RouterOutlet, StudioListComponent, RouterLink]
 })
 export class AppComponent {
   title = 'bookingApp';

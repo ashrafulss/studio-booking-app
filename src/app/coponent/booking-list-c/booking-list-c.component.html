@@ -1,0 +1,20 @@
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">Booking List</h1>
+
+  <div *ngIf="bookings.length === 0" class="text-gray-600">
+    No bookings found.
+  </div>
+
+  <div *ngFor="let booking of bookings" class="mb-4 p-4 border rounded shadow-sm bg-white">
+    <p><strong>User Name:</strong> {{ booking.userName }}</p>
+    <p><strong>User Email:</strong> {{ booking.userEmail }}</p>
+
+    <ng-container *ngIf="getStudioById(booking.studioId) as studio">
+      <p><strong>Studio Type:</strong> {{ studio.Type }}</p>
+      <p><strong>Location:</strong> {{ studio.Location.City }}, {{ studio.Location.Area }}</p>
+    </ng-container>
+
+    <p><strong>Date:</strong> {{ booking.date }}</p>
+    <p><strong>Time:</strong> {{ booking.time }}</p>
+  </div>
+</div>
