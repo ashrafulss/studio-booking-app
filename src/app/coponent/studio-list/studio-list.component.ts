@@ -210,4 +210,133 @@ export class StudioListComponent {
     return deg * (Math.PI / 180);
   }
 
+
+
+
+  isBookingModalOpen = false;
+selectedStudio: Studio | null = null;
+
+// Booking form fields
+bookingDate: string = '';
+selectedTimeSlot: string = '';
+userName: string = '';
+userEmail: string = '';
+
+bookingError: string | null = null;
+bookingSuccess: string | null = null;
+
+// Minimum date for date picker: today
+minDate = new Date().toISOString().split('T')[0];
+
+// Time slots available for selected studio (based on availability)
+availableTimeSlots: string[] = [];
+
+// Booking storage key in localStorage
+private bookingStorageKey = 'studioBookings';
+
+openBookingModal(studio: Studio) {
+  this.selectedStudio = studio;
+  this.bookingDate = '';
+  this.selectedTimeSlot = '';
+  this.userName = '';
+  this.userEmail = '';
+  this.bookingError = null;
+  this.bookingSuccess = null;
+  this.isBookingModalOpen = true;
+  this.generateTimeSlots();
+}
+
+closeBookingModal() {
+  this.isBookingModalOpen = false;
+}
+
+// Generate time slots between open and close hour
+generateTimeSlots() {
+  if (!this.selectedStudio) return;
+
+  const openHour = this.selectedStudio.Availability.Open; // e.g. "09:00"
+  const closeHour = this.selectedStudio.Availability.Close; // e.g. "18:00"
+
+  // parse hour and minute
+  const [openH, openM] = openHour.split(':').map(Number);
+  const [closeH, closeM] = closeHour.split(':').map(Number);
+
+  const slots: string[] = [];
+
+  // Assuming 1-hour slots for simplicity (can be customized)
+  let current = new Date();
+  current.setHours(openH, openM, 0, 0);
+
+  const end = new Date();
+  end.setHours(closeH, closeM, 0, 0);
+
+  while (current < end) {
+    const slot = current.toTimeString().slice(0, 5); // "HH:mm"
+    slots.push(slot);
+    current = new Date(current.getTime() + 60 * 60 * 1000); // add 1 hour
+  }
+
+  this.availableTimeSlots = slots;
+}
+
+// Check availability from localStorage bookings
+isTimeSlotAvailable(date: string, time: string): boolean {
+  const bookings = this.getBookingsFromStorage();
+
+  if (!this.selectedStudio) return false;
+
+  return !bookings.some(
+    (b) =>
+      b.studioId === this.selectedStudio!.Id &&
+      b.date === date &&
+      b.time === time
+  );
+}
+
+// Retrieve bookings array from localStorage
+getBookingsFromStorage(): any[] {
+  const json = localStorage.getItem(this.bookingStorageKey);
+  return json ? JSON.parse(json) : [];
+}
+
+// Save booking to localStorage
+saveBooking(booking: any) {
+  const bookings = this.getBookingsFromStorage();
+  bookings.push(booking);
+  localStorage.setItem(this.bookingStorageKey, JSON.stringify(bookings));
+}
+
+confirmBooking() {
+  this.bookingError = null;
+  this.bookingSuccess = null;
+
+  if (!this.bookingDate || !this.selectedTimeSlot || !this.userName || !this.userEmail) {
+    this.bookingError = 'Please fill in all fields.';
+    return;
+  }
+
+  if (!this.isTimeSlotAvailable(this.bookingDate, this.selectedTimeSlot)) {
+    this.bookingError = 'The selected time slot is not available. Please choose another time.';
+    return;
+  }
+
+  // Save booking
+  const newBooking = {
+    studioId: this.selectedStudio!.Id,
+    studioName: this.selectedStudio!.Name,
+    date: this.bookingDate,
+    time: this.selectedTimeSlot,
+    userName: this.userName,
+    userEmail: this.userEmail,
+  };
+
+  this.saveBooking(newBooking);
+
+  this.bookingSuccess = `Booking confirmed for ${this.bookingDate} at ${this.selectedTimeSlot}. Thank you, ${this.userName}!`;
+
+  // Optionally reset form or close modal after some delay
+  setTimeout(() => {
+    this.closeBookingModal();
+  }, 3000);
+}
 }
