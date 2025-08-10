@@ -3,6 +3,8 @@ import { StudioService } from '../../services/studio.service';
 import { Studio } from '../../model/Studio';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-studio-list',
@@ -53,7 +55,7 @@ export class StudioListComponent {
 
   private bookingStorageKey = 'studioBookings';
 
-  constructor(private studioService: StudioService) { }
+  constructor(private studioService: StudioService,  private router: Router) { }
 
   ngOnInit(): void {
     this.loadStudios();
@@ -312,6 +314,7 @@ export class StudioListComponent {
 
     setTimeout(() => {
       this.closeBookingModal();
+      this.router.navigate(['/bookings']);
     }, 3000);
   }
 }

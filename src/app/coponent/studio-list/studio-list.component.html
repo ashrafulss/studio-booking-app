@@ -1,53 +1,67 @@
-<div class="m-6 flex items-center space-x-6 justify-end max-w-full">
-  <div class="relative max-w-sm flex-1">
+<div class="m-6 flex flex-wrap items-center justify-end gap-6 max-w-full">
+  <!-- Search input -->
+  <div class="relative max-w-sm flex-grow">
     <input
       type="text"
       placeholder="Search by area or type..."
       [(ngModel)]="searchTerm"
       (input)="onSearchInputChange()"
-      class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       autocomplete="off"
+      class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
     />
     <button
       (click)="onSearchClick()"
-      class="absolute right-1 top-1 bottom-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      class="absolute right-1 top-1 bottom-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
     >
       Search
     </button>
 
     <ul
       *ngIf="showSuggestions"
-      class="absolute top-full right-0 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-50 max-h-48 overflow-auto"
+      class="absolute top-full right-0 mt-1 w-full max-h-48 overflow-auto rounded-md border border-gray-300 bg-white shadow-lg z-50"
     >
       <li
         *ngFor="let suggestion of suggestions"
         (click)="selectSuggestion(suggestion)"
-        class="cursor-pointer px-4 py-2 hover:bg-blue-600 hover:text-white"
+        class="cursor-pointer px-4 py-2 hover:bg-blue-600 hover:text-white transition"
       >
         {{ suggestion }}
       </li>
     </ul>
   </div>
 
-  <div class="flex items-center space-x-4 whitespace-nowrap">
-    <div class="flex items-center space-x-2">
+  <!-- Radius selection -->
+  <div class="flex items-center space-x-6 whitespace-nowrap">
+    <div class="flex items-center space-x-3">
       <label *ngFor="let radius of radiusOptions" class="inline-flex items-center space-x-1 cursor-pointer">
-        <input type="radio" name="radius" [value]="radius" [(ngModel)]="selectedRadius" class="form-radio" />
-        <span>{{ radius }} km</span>
+        <input
+          type="radio"
+          name="radius"
+          [value]="radius"
+          [(ngModel)]="selectedRadius"
+          class="form-radio text-green-600 focus:ring-green-500"
+        />
+        <span class="select-none">{{ radius }} km</span>
       </label>
     </div>
-    <button (click)="searchByRadius()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+    <button
+      (click)="searchByRadius()"
+      class="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+    >
       Search by Radius
     </button>
   </div>
 </div>
 
-<div *ngIf="locationError" class="text-red-600 font-semibold mb-4">
+<div *ngIf="locationError" class="m-6 text-center text-red-600 font-semibold">
   {{ locationError }}
 </div>
 
 <div class="p-6 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-  <div *ngFor="let studio of pagedStudios" class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+  <div
+    *ngFor="let studio of pagedStudios"
+    class="bg-white rounded-lg shadow-md flex flex-col overflow-hidden transition hover:shadow-xl hover:scale-[1.02]"
+  >
     <div class="p-5 flex-grow">
       <h2 class="text-2xl font-semibold mb-2 text-gray-800">{{ studio.Name }}</h2>
       <p class="text-sm text-gray-600 mb-1"><strong>Type:</strong> {{ studio.Type }}</p>
@@ -61,7 +75,7 @@
     <div class="p-5 pt-0">
       <button
         (click)="openBookingModal(studio)"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors duration-300"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition-colors duration-300"
       >
         Book Now
       </button>
@@ -69,25 +83,38 @@
   </div>
 </div>
 
-<div class="flex justify-center mb-6 space-x-2">
-  <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
-    class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-200 disabled:opacity-50">
+<div class="flex justify-center mb-6 space-x-3">
+  <button
+    (click)="goToPage(currentPage - 1)"
+    [disabled]="currentPage === 1"
+    class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
+  >
     Previous
   </button>
 
-  <button *ngFor="let page of [].constructor(totalPages); let i = index" (click)="goToPage(i + 1)"
-    [class.bg-blue-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
-    class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-200">
+  <button
+    *ngFor="let page of [].constructor(totalPages); let i = index"
+    (click)="goToPage(i + 1)"
+    [class.bg-blue-600]="currentPage === i + 1"
+    [class.text-white]="currentPage === i + 1"
+    class="px-4 py-2 rounded-md border border-gray-300 hover:bg-blue-500 hover:text-white transition"
+  >
     {{ i + 1 }}
   </button>
 
-  <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
-    class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-200 disabled:opacity-50">
+  <button
+    (click)="goToPage(currentPage + 1)"
+    [disabled]="currentPage === totalPages"
+    class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
+  >
     Next
   </button>
 </div>
 
-<div *ngIf="isBookingModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div
+  *ngIf="isBookingModalOpen"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
   <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
     <h2 class="text-xl font-semibold mb-4">Book Studio: {{ selectedStudio?.Name }}</h2>
 
@@ -99,7 +126,7 @@
         [(ngModel)]="bookingDate"
         [min]="minDate"
         required
-        class="w-full px-3 py-2 border rounded mb-4"
+        class="w-full px-3 py-2 border rounded-md mb-4"
       />
 
       <label class="block mb-2 font-semibold">Select Time Slot</label>
@@ -107,7 +134,7 @@
         name="timeSlot"
         [(ngModel)]="selectedTimeSlot"
         required
-        class="w-full px-3 py-2 border rounded mb-4"
+        class="w-full px-3 py-2 border rounded-md mb-4"
       >
         <option value="" disabled selected>Select a time slot</option>
         <option *ngFor="let slot of availableTimeSlots" [value]="slot">{{ slot }}</option>
@@ -120,7 +147,7 @@
         [(ngModel)]="userName"
         required
         minlength="2"
-        class="w-full px-3 py-2 border rounded mb-4"
+        class="w-full px-3 py-2 border rounded-md mb-4"
       />
 
       <label class="block mb-2 font-semibold">Your Email</label>
@@ -130,18 +157,20 @@
         [(ngModel)]="userEmail"
         required
         email
-        class="w-full px-3 py-2 border rounded mb-4"
+        class="w-full px-3 py-2 border rounded-md mb-4"
       />
 
       <div *ngIf="bookingError" class="text-red-600 mb-4">{{ bookingError }}</div>
       <div *ngIf="bookingSuccess" class="text-green-600 mb-4">{{ bookingSuccess }}</div>
 
-      <div class="flex justify-end space-x-2">
-        <button type="button" (click)="closeBookingModal()" class="px-4 py-2 border rounded">Cancel</button>
+      <div class="flex justify-end space-x-3">
+        <button type="button" (click)="closeBookingModal()" class="px-4 py-2 border rounded-md hover:bg-gray-100 transition">
+          Cancel
+        </button>
         <button
           type="submit"
-          
-          class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          [disabled]="bookingForm.invalid"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
         >
           Confirm Booking
         </button>

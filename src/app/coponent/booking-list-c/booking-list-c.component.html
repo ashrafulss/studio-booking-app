@@ -1,20 +1,48 @@
-<div class="container mx-auto p-6">
-  <h1 class="text-3xl font-bold mb-6">Booking List</h1>
+<div class="container mx-auto p-6 max-w-4xl">
+  <h1 class="text-4xl font-extrabold mb-8 text-center text-blue-700 border-b-4 border-blue-500 pb-3">
+    Booking List
+  </h1>
 
-  <div *ngIf="bookings.length === 0" class="text-gray-600">
+  <div *ngIf="bookings.length === 0" class="text-gray-500 italic text-center py-10">
     No bookings found.
   </div>
 
-  <div *ngFor="let booking of bookings" class="mb-4 p-4 border rounded shadow-sm bg-white">
-    <p><strong>User Name:</strong> {{ booking.userName }}</p>
-    <p><strong>User Email:</strong> {{ booking.userEmail }}</p>
+  <div *ngFor="let booking of pagedBookings" 
+       class="mb-6 p-6 border rounded-lg shadow-lg bg-white transition hover:shadow-2xl hover:scale-[1.02] duration-300">
+    <p class="text-lg font-semibold text-gray-800 mb-1">User Name: <span class="font-normal">{{ booking.userName }}</span></p>
+    <p class="text-gray-600 mb-2">User Email: <span class="font-normal">{{ booking.userEmail }}</span></p>
 
     <ng-container *ngIf="getStudioById(booking.studioId) as studio">
-      <p><strong>Studio Type:</strong> {{ studio.Type }}</p>
-      <p><strong>Location:</strong> {{ studio.Location.City }}, {{ studio.Location.Area }}</p>
+      <p class="text-gray-700 mb-1">Studio Type: <span class="font-medium">{{ studio.Type }}</span></p>
+      <p class="text-gray-700 mb-3">Location: <span class="font-medium">{{ studio.Location.City }}, {{ studio.Location.Area }}</span></p>
     </ng-container>
 
-    <p><strong>Date:</strong> {{ booking.date }}</p>
-    <p><strong>Time:</strong> {{ booking.time }}</p>
+    <div class="flex space-x-6 text-sm text-gray-500">
+      <p>Date: <span class="font-semibold text-gray-800">{{ booking.date }}</span></p>
+      <p>Time: <span class="font-semibold text-gray-800">{{ booking.time }}</span></p>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="flex justify-center space-x-3 mt-10">
+    <button (click)="goToPage(currentPage - 1)" 
+            [disabled]="currentPage === 1"
+            class="px-4 py-2 rounded-md border border-gray-300 hover:bg-blue-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition">
+      Previous
+    </button>
+
+    <button *ngFor="let page of [].constructor(totalPages); let i = index" 
+            (click)="goToPage(i + 1)"
+            [class.bg-blue-600]="currentPage === i + 1" 
+            [class.text-white]="currentPage === i + 1"
+            class="px-4 py-2 rounded-md border border-gray-300 hover:bg-blue-500 hover:text-white transition">
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToPage(currentPage + 1)" 
+            [disabled]="currentPage === totalPages"
+            class="px-4 py-2 rounded-md border border-gray-300 hover:bg-blue-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition">
+      Next
+    </button>
   </div>
 </div>

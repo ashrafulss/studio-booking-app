@@ -15,8 +15,12 @@ export class BookingListCComponent {
 
   bookings: any[] = [];
   studios: Studio[] = [];
+  pagedBookings: any[] = [];
+  currentPage = 1;
+  pageSize = 3;  // bookings per page
+  totalPages = 0;
 
-  constructor(private studioService: StudioService) {}
+  constructor(private studioService: StudioService) { }
 
   ngOnInit(): void {
     this.loadStudios();
@@ -34,12 +38,36 @@ export class BookingListCComponent {
     });
   }
 
-  loadBookings(): void {
-    const bookingsJson = localStorage.getItem('studioBookings');
-    this.bookings = bookingsJson ? JSON.parse(bookingsJson) : [];
-  }
+ 
 
   getStudioById(id: number): Studio | undefined {
     return this.studios.find((studio) => studio.Id === id);
   }
+
+
+loadBookings() {
+  const bookingsJson = localStorage.getItem('studioBookings');
+  this.bookings = bookingsJson ? JSON.parse(bookingsJson) : [];
+  this.bookings.reverse();
+  this.updatePagination();
+}
+
+
+
+updatePagination() {
+  this.totalPages = Math.ceil(this.bookings.length / this.pageSize);
+  this.currentPage = 1;
+  this.setPagedBookings();
+}
+
+setPagedBookings() {
+  const start = (this.currentPage - 1) * this.pageSize;
+  this.pagedBookings = this.bookings.slice(start, start + this.pageSize);
+}
+
+goToPage(page: number) {
+  if (page < 1 || page > this.totalPages) return;
+  this.currentPage = page;
+  this.setPagedBookings();
+}
 }
